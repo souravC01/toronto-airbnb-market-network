@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import sys
 from pathlib import Path
 
@@ -55,6 +56,7 @@ def validate_portfolio(errors: list[str]) -> None:
         "portfolio/pnpm-workspace.yaml",
         "portfolio/postcss.config.mjs",
         "portfolio/public/og.png",
+        "portfolio/public/report/EECS4414-Airbnb-Network-Analysis-Final-Report.pdf",
         "portfolio/scripts/prerender.mjs",
         "portfolio/tests/rendered-html.test.mjs",
         "portfolio/vite.config.ts",
@@ -65,6 +67,15 @@ def validate_portfolio(errors: list[str]) -> None:
         require(path.exists(), f"Missing portfolio artifact: {relative_path}", errors)
         if path.exists() and path.is_file():
             require(path.stat().st_size > 0, f"Portfolio artifact is empty: {relative_path}", errors)
+
+    original_report = REPO / "portfolio" / "public" / "report" / "EECS4414-Airbnb-Network-Analysis-Final-Report.pdf"
+    if original_report.exists():
+        require(
+            hashlib.sha256(original_report.read_bytes()).hexdigest()
+            == "0ad7327026e1bd875f4d61181b5c6db433a95f602d4cfc6dfbf5bea488284201",
+            "Website report must be the unchanged original final-submission PDF",
+            errors,
+        )
 
 
 def main() -> None:
