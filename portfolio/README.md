@@ -2,7 +2,7 @@
 
 This site turns the research repository into a public-facing portfolio story. It presents the network design, graph evolution, Louvain/Leiden results, interpretable market segments, grouped and spatial price validation, parameter sensitivity, methodology, limitations, and portfolio attribution.
 
-[View the live Render deployment](https://toronto-airbnb-market-network.onrender.com).
+[View the live Vercel deployment](https://toronto-airbnb-market-network.vercel.app/).
 
 ## Run locally
 
@@ -20,7 +20,7 @@ pnpm run build
 node --test tests/rendered-html.test.mjs
 ```
 
-The production build is a self-contained Node server. The repository-level `render.yaml` configures Render to build this directory, start that server, and check the home page for service health.
+The production build is a fully static Vite export. It prerenders the complete case study into `dist/index.html` for fast first paint and search visibility, then hydrates the interactive controls in the browser. Vercel deploys this directory with the Vite preset and serves the output from its CDN without a server runtime. The repository-level `render.yaml` is retained temporarily as a legacy fallback during the hosting cutover.
 
 ## Data and assets
 

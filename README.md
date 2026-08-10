@@ -12,7 +12,7 @@ This project models 15,809 Toronto Airbnb listings as a weighted information net
 
 The findings are also presented as an interactive, responsive case study with graph-layer, community-algorithm, validation-scheme, and parameter-sensitivity explorers.
 
-[Open the live interactive case study](https://toronto-airbnb-market-network.onrender.com).
+[Open the live interactive case study](https://toronto-airbnb-market-network.vercel.app/).
 
 To run the presentation locally:
 
@@ -121,7 +121,7 @@ GitHub Actions runs both checks for every push and pull request.
 ├── data/                          # cleaned Toronto snapshot and provenance
 ├── docs/                          # script-level documentation
 ├── portfolio/                     # interactive portfolio case study
-├── render.yaml                    # Render deployment blueprint
+├── render.yaml                    # temporary legacy Render fallback
 ├── results/
 │   ├── figures/                   # generated publication figures
 │   └── tables/                    # canonical experiment results
