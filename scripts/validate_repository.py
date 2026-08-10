@@ -60,7 +60,6 @@ def validate_portfolio(errors: list[str]) -> None:
         "portfolio/scripts/prerender.mjs",
         "portfolio/tests/rendered-html.test.mjs",
         "portfolio/vite.config.ts",
-        "render.yaml",
     }
     for relative_path in sorted(required_files):
         path = REPO / relative_path
