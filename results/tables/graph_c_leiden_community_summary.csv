@@ -1,0 +1,17 @@
+graph_c_leiden_community,listings,median_price_w,mean_price_w,dominant_neighbourhood,dominant_room_type,unique_neighbourhoods,unique_hosts
+0,7078,94.0,130.5874540830743,South Riverdale,Entire home/apt,124,4406
+1,1507,120.0,155.71532846715328,Dovercourt-Wallace Emerson-Junction,Entire home/apt,21,1053
+2,1396,114.0,158.31805157593124,Kensington-Chinatown,Entire home/apt,24,841
+3,1054,201.0,235.09677419354838,Waterfront Communities-The Island,Entire home/apt,3,854
+4,834,161.5,196.1714628297362,Moss Park,Entire home/apt,13,679
+5,751,193.0,251.88015978695074,Waterfront Communities-The Island,Entire home/apt,4,657
+6,730,194.0,230.67534246575343,Waterfront Communities-The Island,Entire home/apt,1,630
+7,724,167.0,193.23618784530387,Bay Street Corridor,Entire home/apt,8,519
+8,384,180.0,213.08072916666666,Annex,Entire home/apt,5,295
+9,315,140.0,168.42539682539683,Mount Pleasant West,Entire home/apt,11,227
+10,266,150.5,160.23684210526315,Willowdale East,Entire home/apt,7,167
+11,245,192.0,232.69387755102042,Niagara,Entire home/apt,1,230
+12,179,44.0,62.0,York University Heights,Private room,4,39
+13,175,181.0,202.98285714285714,Niagara,Entire home/apt,1,162
+14,116,169.5,188.7844827586207,Mimico (includes Humber Bay Shores),Entire home/apt,3,105
+15,55,51.0,76.69090909090909,Bedford Park-Nortown,Private room,3,9

@@ -1,0 +1,7 @@
+graph,algorithm,communities,modularity,largest_community,median_community_size,mean_community_size,singletons,community_detection_seconds
+Graph A: Spatial only,Louvain,134,0.8051240984457402,1408,9.5,117.9776119402985,25,20.64827799797058
+Graph A: Spatial only,Leiden,136,0.8050598238439118,1362,10.0,116.24264705882354,25,6.500805854797363
+Graph B: Spatial + shared host,Louvain,94,0.8069423276464365,1429,7.5,168.18085106382978,21,30.843089818954468
+Graph B: Spatial + shared host,Leiden,94,0.8066661215601705,1526,7.0,168.18085106382978,21,6.517658948898315
+Graph C: Spatial + shared host + attribute similarity,Louvain,17,0.7926355179451313,5857,717.0,929.9411764705883,0,34.37083888053894
+Graph C: Spatial + shared host + attribute similarity,Leiden,16,0.7935840672181148,7078,554.0,988.0625,0,7.158026933670044

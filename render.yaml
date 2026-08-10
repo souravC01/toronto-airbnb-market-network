@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: toronto-airbnb-market-network
+    runtime: node
+    plan: free
+    rootDir: portfolio
+    buildCommand: pnpm install --frozen-lockfile && pnpm run build
+    startCommand: pnpm run start
+    healthCheckPath: /

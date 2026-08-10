@@ -1,0 +1,3 @@
+model,target,test_r2,test_adjusted_r2_approx,mae_log_price,rmse_log_price,mae_dollars_approx,rmse_dollars_approx,test_rows,encoded_features
+Baseline: listing + official neighbourhood,log_price_w,0.6397555074918257,0.6142503926767144,0.3203591748542545,0.4200097246956421,54.59011238810456,101.3581046466018,3162,209
+Expanded: baseline + network community,log_price_w,0.6412969207374053,0.6136761725556859,0.31945007900299327,0.4191101931490073,54.486695231832705,101.01609245904147,3162,226

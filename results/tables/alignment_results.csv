@@ -1,0 +1,7 @@
+graph,algorithm,nmi_vs_neighbourhood,vi_vs_neighbourhood
+Graph A: Spatial only,Louvain,0.7493971025802436,2.7895109601104426
+Graph A: Spatial only,Leiden,0.7538291925412508,2.7562346861915756
+Graph B: Spatial + shared host,Louvain,0.7030402783034737,3.2106909435778492
+Graph B: Spatial + shared host,Leiden,0.7043627066315058,3.1905218164296256
+Graph C: Spatial + shared host + attribute similarity,Louvain,0.5182061244808219,4.502415189623931
+Graph C: Spatial + shared host + attribute similarity,Leiden,0.4940718776158396,4.564972994146632

@@ -1,0 +1,31 @@
+EECS 4414 Final Project Experiment Summary
+==================================================
+
+Graph statistics:
+                                                graph  nodes   edges  density  average_degree  median_degree  average_weighted_degree  connected_components  largest_component_size  largest_component_fraction  average_clustering_weighted_approx  clustering_sample_size  build_seconds
+                                Graph A: Spatial only  15809 1552469 0.012424      196.403188           66.0                54.073541                   100                   13881                    0.878044                            0.297203                     500       6.009128
+                       Graph B: Spatial + shared host  15809 1555991 0.012452      196.848757           67.0                54.747872                    53                   15601                    0.986843                            0.167380                     500       7.951073
+Graph C: Spatial + shared host + attribute similarity  15809 1607040 0.012861      203.306977           73.0                56.193397                     1                   15809                    1.000000                            0.099923                     500      12.311556
+
+Community detection:
+                                                graph algorithm  communities  modularity  largest_community  median_community_size  mean_community_size  singletons  community_detection_seconds
+                                Graph A: Spatial only   Louvain          134    0.805124               1408                    9.5           117.977612          25                    20.648278
+                                Graph A: Spatial only    Leiden          136    0.805060               1362                   10.0           116.242647          25                     6.500806
+                       Graph B: Spatial + shared host   Louvain           94    0.806942               1429                    7.5           168.180851          21                    30.843090
+                       Graph B: Spatial + shared host    Leiden           94    0.806666               1526                    7.0           168.180851          21                     6.517659
+Graph C: Spatial + shared host + attribute similarity   Louvain           17    0.792636               5857                  717.0           929.941176           0                    34.370839
+Graph C: Spatial + shared host + attribute similarity    Leiden           16    0.793584               7078                  554.0           988.062500           0                     7.158027
+
+Neighbourhood alignment:
+                                                graph algorithm  nmi_vs_neighbourhood  vi_vs_neighbourhood
+                                Graph A: Spatial only   Louvain              0.749397             2.789511
+                                Graph A: Spatial only    Leiden              0.753829             2.756235
+                       Graph B: Spatial + shared host   Louvain              0.703040             3.210691
+                       Graph B: Spatial + shared host    Leiden              0.704363             3.190522
+Graph C: Spatial + shared host + attribute similarity   Louvain              0.518206             4.502415
+Graph C: Spatial + shared host + attribute similarity    Leiden              0.494072             4.564973
+
+Price model comparison:
+                                     model      target  test_r2  test_adjusted_r2_approx  mae_log_price  rmse_log_price  mae_dollars_approx  rmse_dollars_approx  test_rows  encoded_features
+Baseline: listing + official neighbourhood log_price_w 0.639756                 0.614250       0.320359         0.42001           54.590112           101.358105       3162               209
+    Expanded: baseline + network community log_price_w 0.641297                 0.613676       0.319450         0.41911           54.486695           101.016092       3162               226
