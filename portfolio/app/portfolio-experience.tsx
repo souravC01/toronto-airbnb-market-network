@@ -144,9 +144,20 @@ export function PortfolioExperience() {
           <a href="#robustness">Robustness</a>
           <a href="#method">Method</a>
         </nav>
-        <a className="nav-cta" href="https://github.com/souravC01/toronto-airbnb-market-network" target="_blank" rel="noreferrer">
-          Repository <Arrow />
-        </a>
+        <div className="topbar-actions">
+          <a
+            className="nav-cta"
+            href="/report/EECS4414-Airbnb-Network-Analysis-Final-Report.pdf"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open the original EECS 4414 final report in a new tab"
+          >
+            Report <Arrow />
+          </a>
+          <a className="nav-cta" href="https://github.com/souravC01/toronto-airbnb-market-network" target="_blank" rel="noreferrer">
+            Repository <Arrow />
+          </a>
+        </div>
       </header>
 
       <main id="main-content">
@@ -409,7 +420,15 @@ export function PortfolioExperience() {
           <p>This case study shows where network analysis adds real explanatory value—and where disciplined validation says it does not.</p>
           <div className="hero-actions closing-actions">
             <a className="button primary" href="https://github.com/souravC01/toronto-airbnb-market-network" target="_blank" rel="noreferrer">View repository <Arrow /></a>
-            <a className="button secondary" href="#robustness">Review robustness <Arrow /></a>
+            <a
+              className="button secondary"
+              href="/report/EECS4414-Airbnb-Network-Analysis-Final-Report.pdf"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Open the original EECS 4414 final report in a new tab"
+            >
+              View report <Arrow />
+            </a>
           </div>
         </section>
       </main>

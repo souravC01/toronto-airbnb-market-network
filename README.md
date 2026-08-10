@@ -14,6 +14,8 @@ The findings are also presented as an interactive, responsive case study with gr
 
 [Open the live interactive case study](https://toronto-airbnb-market-network.vercel.app/).
 
+[Open the original EECS 4414 final report](portfolio/public/report/EECS4414-Airbnb-Network-Analysis-Final-Report.pdf). The PDF is preserved unchanged with its original submission authorship.
+
 To run the presentation locally:
 
 ```bash
@@ -142,7 +144,7 @@ The included cleaned dataset was derived from the November 2025 Toronto snapshot
 
 ## Portfolio ownership
 
-This repository is Sourav Chandhok's independently maintained portfolio edition of a York University EECS 4414 research project. It contains the reproducibility improvements, robustness experiments, canonical outputs, and interactive presentation maintained for portfolio use. Archived course submissions are intentionally not included.
+This repository is Sourav Chandhok's independently maintained portfolio edition of a York University EECS 4414 research project. It contains the reproducibility improvements, robustness experiments, canonical outputs, and interactive presentation maintained for portfolio use. The original final report is included unchanged as a historical course artifact with its original submission authorship intact.
 
 ## Current limitations
 

@@ -4,6 +4,9 @@ This site turns the research repository into a public-facing portfolio story. It
 
 [View the live Vercel deployment](https://toronto-airbnb-market-network.vercel.app/).
 
+The site also links to the original EECS 4414 final report. The PDF is served
+unchanged and retains the original submission authorship.
+
 ## Run locally
 
 Node.js 22 and pnpm are required.

@@ -14,6 +14,9 @@ test("static export contains the completed interactive case study", async () => 
   assert.match(html, /Parameter sensitivity/);
   assert.match(html, /Portfolio attribution/);
   assert.match(html, /Research, analysis, and portfolio presentation by Sourav Chandhok/);
+  assert.match(html, /View report/);
+  assert.match(html, /EECS4414-Airbnb-Network-Analysis-Final-Report\.pdf/);
+  assert.match(html, /Open the original EECS 4414 final report in a new tab/);
   assert.match(html, /github\.com\/souravC01\/toronto-airbnb-market-network/);
   assert.doesNotMatch(html, /Team attribution|equal contribution/i);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
@@ -30,6 +33,12 @@ test("publishes absolute social metadata and required artifacts", async () => {
 
   await Promise.all([
     access(new URL("../dist/og.png", import.meta.url)),
+    access(
+      new URL(
+        "../dist/report/EECS4414-Airbnb-Network-Analysis-Final-Report.pdf",
+        import.meta.url,
+      ),
+    ),
     access(
       new URL(
         "../dist/figures/graph_c_louvain_community_map_labelled.png",
