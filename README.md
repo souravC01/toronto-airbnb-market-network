@@ -123,7 +123,6 @@ GitHub Actions runs both checks for every push and pull request.
 ├── data/                          # cleaned Toronto snapshot and provenance
 ├── docs/                          # script-level documentation
 ├── portfolio/                     # interactive portfolio case study
-├── render.yaml                    # temporary legacy Render fallback
 ├── results/
 │   ├── figures/                   # generated publication figures
 │   └── tables/                    # canonical experiment results
