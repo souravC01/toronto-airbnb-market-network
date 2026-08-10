@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  analysis:
     runs-on: ubuntu-latest
     env:
       MPLBACKEND: Agg
@@ -23,3 +23,28 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Validate committed artifacts
         run: python scripts/validate_repository.py
+
+  portfolio:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: portfolio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.16.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: portfolio/pnpm-lock.yaml
+      - name: Install portfolio dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lint portfolio
+        run: pnpm run lint
+      - name: Build static portfolio
+        run: pnpm run build
+      - name: Test rendered portfolio
+        run: pnpm run test

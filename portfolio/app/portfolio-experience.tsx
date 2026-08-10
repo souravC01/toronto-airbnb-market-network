@@ -1,6 +1,3 @@
-"use client";
-
-import Image from "next/image";
 import { useState } from "react";
 
 const graphVariants = [
@@ -175,13 +172,12 @@ export function PortfolioExperience() {
               <span>Graph C · Louvain communities</span>
               <span className="live-dot">Portfolio case study</span>
             </div>
-            <Image
+            <img
               src="/figures/graph_c_louvain_community_map_labelled.png"
               alt="Map of Toronto Airbnb market communities with a citywide background and highlighted local segments"
               width={2250}
               height={2100}
-              sizes="(max-width: 860px) 100vw, 47vw"
-              priority
+              fetchPriority="high"
             />
             <div className="visual-caption">
               <div><span className="metric-number">1</span><span>connected component</span></div>
@@ -255,12 +251,12 @@ export function PortfolioExperience() {
           </div>
           <div className="algorithm-layout" role="tabpanel" aria-live="polite">
             <figure className="map-card">
-              <Image
+              <img
                 src={algorithmData.image}
                 alt={`${algorithm} communities mapped across Toronto Airbnb listings`}
                 width={2100}
                 height={1800}
-                sizes="(max-width: 860px) 100vw, 60vw"
+                loading="lazy"
               />
               <figcaption>Community colours are categorical; IDs should not be matched directly across algorithms.</figcaption>
             </figure>
@@ -298,12 +294,12 @@ export function PortfolioExperience() {
             </article>
           </div>
           <figure className="wide-figure">
-            <Image
+            <img
               src="/figures/community_characterisation.png"
               alt="Detected communities ranked by median price, dominant neighbourhood, room type, and size"
               width={3000}
               height={2100}
-              sizes="(max-width: 860px) 100vw, 90vw"
+              loading="lazy"
             />
             <figcaption>Largest communities profiled by price, room type, dominant neighbourhood, and listing count.</figcaption>
           </figure>
