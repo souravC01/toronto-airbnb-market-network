@@ -23,7 +23,7 @@ pnpm run build
 node --test tests/rendered-html.test.mjs
 ```
 
-The production build is a fully static Vite export. It prerenders the complete case study into `dist/index.html` for fast first paint and search visibility, then hydrates the interactive controls in the browser. Vercel deploys this directory with the Vite preset and serves the output from its CDN without a server runtime. The repository-level `render.yaml` is retained temporarily as a legacy fallback during the hosting cutover.
+The production build is a fully static Vite export. It prerenders the complete case study into `dist/index.html` for fast first paint and search visibility, then hydrates the interactive controls in the browser. Vercel deploys this directory with the Vite preset and serves the output from its CDN without a server runtime.
 
 ## Data and assets
 
