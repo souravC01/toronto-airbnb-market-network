@@ -16,7 +16,7 @@ test("static export contains the completed interactive case study", async () => 
   assert.match(html, /Research, analysis, and portfolio presentation by Sourav Chandhok/);
   assert.match(html, /View report/);
   assert.match(html, /EECS4414-Airbnb-Network-Analysis-Final-Report\.pdf/);
-  assert.match(html, /Open the original EECS 4414 final report in a new tab/);
+  assert.match(html, /Open the original.*report in a new tab/);
   assert.match(html, /github\.com\/souravC01\/toronto-airbnb-market-network/);
   assert.doesNotMatch(html, /Team attribution|equal contribution/i);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);

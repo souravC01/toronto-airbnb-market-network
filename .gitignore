@@ -35,3 +35,6 @@ results/assignments/
 results/tables/*_assignments.csv
 results/tables/*_only_summary.txt
 *.log
+Figma_Design.md
+encoded_design.txt
+AGENTS.md
