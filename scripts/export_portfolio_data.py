@@ -340,7 +340,8 @@ def build_payload() -> Dict:
 def source_digests() -> Dict[str, str]:
     digests = {}
     for path in sorted(TABLES.glob("*.csv")):
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+        normalized = path.read_bytes().replace(b"\r\n", b"\n")
+        digest = hashlib.sha256(normalized).hexdigest()[:16]
         digests[path.name] = digest
     return digests
 
