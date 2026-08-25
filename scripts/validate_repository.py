@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import hashlib
+import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -43,8 +45,81 @@ def validate_pairs(df: pd.DataFrame, label: str, errors: list[str]) -> None:
     require(actual == expected, f"{label} graph/algorithm coverage is inconsistent", errors)
 
 
+def validate_no_frontend_drift(errors: list[str]) -> None:
+    """Fail if the website's numbers no longer match ``results/tables/*.csv``.
+
+    This is the check whose absence let the published page drift away from the
+    pipeline. The previous version of this script verified that files existed and
+    that tables had the expected row counts, but it never compared a single value
+    rendered by the site against the CSV it was supposed to come from. As a
+    result the live page showed a community table and a set of dollar-error
+    figures that the pipeline had never produced.
+
+    ``scripts/export_portfolio_data.py --check`` regenerates the JSON the page
+    imports and diffs it against the committed copy, so any future pipeline
+    change that is not propagated to the site fails CI instead of shipping.
+    """
+    exporter = REPO / "scripts" / "export_portfolio_data.py"
+    if not exporter.exists():
+        errors.append("Missing scripts/export_portfolio_data.py")
+        return
+
+    generated = REPO / "portfolio" / "app" / "data" / "generated.json"
+    if not generated.exists():
+        errors.append(
+            "Missing portfolio/app/data/generated.json. Run "
+            "`python scripts/export_portfolio_data.py`."
+        )
+        return
+
+    completed = subprocess.run(
+        [sys.executable, str(exporter), "--check"],
+        capture_output=True,
+        text=True,
+        cwd=REPO,
+    )
+    if completed.returncode != 0:
+        detail = (completed.stdout + completed.stderr).strip()
+        errors.append(
+            "Website data has drifted from results/tables/*.csv. Run "
+            "`python scripts/export_portfolio_data.py` and commit the result.\n"
+            + "\n".join(f"      {line}" for line in detail.splitlines()[:20])
+        )
+
+
+def validate_no_hardcoded_numbers(errors: list[str]) -> None:
+    """Fail if pipeline numbers are written by hand in the page component.
+
+    The page must read every figure from ``generated.json``. A bare dollar amount
+    with cents, or a four-decimal metric, is a pipeline output; finding one in the
+    TSX means the drift has started again.
+    """
+    component = REPO / "portfolio" / "app" / "portfolio-experience.tsx"
+    if not component.exists():
+        errors.append("Missing portfolio/app/portfolio-experience.tsx")
+        return
+
+    dollars = re.compile(r"\$\d+\.\d{2}")
+    metrics = re.compile(r"(?<![\w.])\d\.\d{4}(?![\w])")
+
+    offenders: list[str] = []
+    for number, line in enumerate(component.read_text().splitlines(), start=1):
+        stripped = line.strip()
+        if stripped.startswith("//") or stripped.startswith("*") or stripped.startswith("/*"):
+            continue
+        if dollars.search(stripped) or metrics.search(stripped):
+            offenders.append(f"{number}: {stripped[:90]}")
+
+    if offenders:
+        errors.append(
+            "portfolio-experience.tsx contains hardcoded pipeline numbers; read "
+            "them from generated.json instead:\n"
+            + "\n".join(f"      {entry}" for entry in offenders[:15])
+        )
+
 def validate_portfolio(errors: list[str]) -> None:
     required_files = {
+        "portfolio/app/data/generated.json",
         "portfolio/app/globals.css",
         "portfolio/app/portfolio-experience.tsx",
         "portfolio/entry-client.tsx",
@@ -152,6 +227,8 @@ def main() -> None:
         require((figure_dir / name).exists(), f"Missing figure: results/figures/{name}", errors)
 
     validate_portfolio(errors)
+    validate_no_frontend_drift(errors)
+    validate_no_hardcoded_numbers(errors)
 
     if errors:
         print("Repository validation failed:")

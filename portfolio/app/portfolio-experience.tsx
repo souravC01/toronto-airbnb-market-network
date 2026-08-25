@@ -1,151 +1,78 @@
 import { useState, useEffect } from "react";
 
-const graphVariants = [
-  {
-    id: "A",
-    name: "Spatial only",
-    fullName: "Graph A: Spatial only",
-    relationships: ["Within 500 m geographic radius"],
-    edges: "1,552,469",
-    nodes: "15,809",
-    components: 100,
-    largestComp: "87.8%",
-    avgDegree: "196.4",
-    modularity: "0.8051",
-    communities: 134,
-    nmi: 0.7494,
-    vi: "2.790",
-    takeaway:
-      "The geographic baseline reconstructs neighbourhood-like local clusters most closely. 100 isolated components exist.",
-  },
-  {
-    id: "B",
-    name: "Spatial + shared host",
-    fullName: "Graph B: Spatial + shared host",
-    relationships: ["Within 500 m geographic radius", "Same-host nearest neighbours (k=5)"],
-    edges: "1,555,991",
-    nodes: "15,809",
-    components: 53,
-    largestComp: "98.7%",
-    avgDegree: "196.8",
-    modularity: "0.8069",
-    communities: 94,
-    nmi: 0.7030,
-    vi: "3.211",
-    takeaway:
-      "Sparse ownership links bridge local clusters without overwhelming the graph with dense host cliques.",
-  },
-  {
-    id: "C",
-    name: "Full market network",
-    fullName: "Graph C: Spatial + shared host + attribute similarity",
-    relationships: [
-      "Within 500 m geographic radius",
-      "Same-host nearest neighbours (k=5)",
-      "Listing attribute cosine similarity (k=5)",
-    ],
-    edges: "1,607,040",
-    nodes: "15,809",
-    components: 1,
-    largestComp: "100.0%",
-    avgDegree: "203.3",
-    modularity: "0.7926",
-    communities: 17,
-    nmi: 0.5182,
-    vi: "4.502",
-    takeaway:
-      "Similarity links connect the entire city into one single component and 17 broad market segments that cross administrative lines.",
-  },
-];
+import generated from "./data/generated.json";
 
-const algorithms = {
-  Louvain: {
-    communities: 17,
-    modularity: 0.7926,
-    largest: "5,857",
-    medianSize: "717",
-    nmi: 0.5182,
-    vi: 4.5024,
-    image: "/figures/graph_c_louvain_community_map.png",
-    note: "Primary interpretation method; recovers a citywide background market and 16 structured local & boutique segments.",
-  },
-  Leiden: {
-    communities: 16,
-    modularity: 0.7936,
-    largest: "7,078",
-    medianSize: "554",
-    nmi: 0.4941,
-    vi: 4.5650,
-    image: "/figures/graph_c_leiden_community_map.png",
-    note: "Robustness check; nearly identical modularity with a different partition and a slightly larger dominant segment.",
-  },
+/**
+ * Every number rendered by this page comes from `./data/generated.json`, which
+ * `scripts/export_portfolio_data.py` derives from `results/tables/*.csv`. CI runs
+ * that script with `--check` and fails the build if the JSON and the CSVs
+ * disagree, so the page cannot silently drift away from the pipeline again.
+ *
+ * Only editorial prose is written by hand below. If you want to change a number,
+ * change the pipeline and re-run the exporter.
+ */
+
+type GraphVariant = (typeof generated.graphs)[number] & { takeaway: string };
+type ValidationScheme = (typeof generated.validationSchemes)[number] & { note: string };
+type SensitivitySetting = (typeof generated.sensitivitySettings)[number] & { note: string };
+
+const headline = generated.headline;
+
+const graphNotes: Record<string, string> = {
+  A: "The geographic baseline reconstructs neighbourhood-like local clusters most closely, but leaves 100 isolated components.",
+  B: "Sparse ownership links bridge local clusters without overwhelming the graph with dense host cliques.",
+  C: "Similarity links connect the entire city into one component and a small number of broad market segments that cross administrative lines.",
 };
 
-const topCommunitiesSummary = [
-  { id: "C0", size: "5,857", price: "$125", dominantNeighbourhood: "Citywide background (114 areas)", roomType: "Entire home/apt (78%)", span: "114" },
-  { id: "C1", size: "2,042", price: "$201", dominantNeighbourhood: "Waterfront Communities / The Island", roomType: "Entire home/apt (96%)", span: "18" },
-  { id: "C2", size: "1,489", price: "$185", dominantNeighbourhood: "Bay Street Corridor & Downtown", roomType: "Entire home/apt (92%)", span: "24" },
-  { id: "C3", size: "1,120", price: "$48", dominantNeighbourhood: "York University Heights & Downsview", roomType: "Private room (88%)", span: "32" },
-  { id: "C4", size: "945", price: "$165", dominantNeighbourhood: "Dovercourt-Wallace Emerson-Junction", roomType: "Entire home/apt (81%)", span: "29" },
-  { id: "C5", size: "812", price: "$170", dominantNeighbourhood: "Kensington-Chinatown & Annex", roomType: "Entire home/apt (75%)", span: "22" },
-  { id: "C6", size: "645", price: "$51", dominantNeighbourhood: "Scarborough & Milliken Suburbs", roomType: "Private room (94%)", span: "19" },
-  { id: "C7", size: "598", price: "$195", dominantNeighbourhood: "Mimico / Humber Bay Shores", roomType: "Entire home/apt (94%)", span: "8" },
-];
+const algorithmNotes: Record<string, string> = {
+  Louvain:
+    "Primary interpretation method: recovers one large citywide background market plus a set of structured local and boutique segments.",
+  Leiden:
+    "Robustness check: near-identical modularity from a different partition with a larger dominant segment, which is itself evidence that the exact partition is not uniquely determined.",
+};
 
-const validationSchemes = [
-  {
-    id: "random",
-    label: "Random folds",
-    fullName: "Random 5-Fold Cross-Validation",
-    baseline: 0.6341,
-    expanded: 0.6358,
-    delta: "+0.0017",
-    adjustedDelta: "−0.0004",
-    baseMae: "$54.67",
-    expandedMae: "$54.49",
-    maeDelta: "−$0.18",
-    wins: "5 / 5",
-    note: "Listing-level shuffled folds reproduce a slight raw R² gain (+0.0017), but complexity-adjusted R² declines in every fold.",
-  },
-  {
-    id: "host",
-    label: "Host-grouped",
-    fullName: "Host-Grouped 5-Fold Cross-Validation",
-    baseline: 0.6246,
-    expanded: 0.6262,
-    delta: "+0.0016",
-    adjustedDelta: "−0.0007",
-    baseMae: "$54.91",
-    expandedMae: "$54.77",
-    maeDelta: "−$0.14",
-    wins: "5 / 5",
-    note: "Every host remains strictly in train or test (zero host overlap verified). The small association is not host-leakage.",
-  },
-  {
-    id: "spatial",
-    label: "Spatial blocks",
-    fullName: "Spatial-Block 5-Fold Cross-Validation",
-    baseline: 0.5290,
-    expanded: 0.5314,
-    delta: "+0.0024",
-    adjustedDelta: "−0.0010",
-    baseMae: "$61.70",
-    expandedMae: "$61.27",
-    maeDelta: "−$0.43",
-    wins: "3 / 5",
-    note: "Holding out entire geographic regions is harder and more variable (lower overall R²); the raw gain is not consistent across all blocks.",
-  },
-];
+const validationNotes: Record<string, string> = {
+  random:
+    "Listing-level shuffled folds reproduce a small raw R² gain that is positive in every fold. Read this alongside the permutation null rather than the complexity-adjusted column.",
+  host:
+    "Every host stays strictly in train or test (zero host overlap, verified per fold), so the association is not host leakage.",
+  spatial:
+    "Holding out whole geographic regions lowers R² because within-block price variance is lower, not because absolute error is worse — MAE is in fact the lowest of the three schemes. The gain is inconsistent across blocks.",
+};
 
-const sensitivitySettings = [
-  { id: "baseline", label: "Baseline", radius: "500 m", k: "5", weights: "0.60 / 0.25 / 0.15", communities: 17, modularity: 0.7926, stability: 1.0000, neighbourhood: 0.5182, note: "Standard setup: 500 m spatial radius, attribute k = 5, and 0.60/0.25/0.15 weights." },
-  { id: "r300", label: "Radius 300 m", radius: "300 m", k: "5", weights: "0.60 / 0.25 / 0.15", communities: 21, modularity: 0.8025, stability: 0.6945, neighbourhood: 0.4340, note: "A tighter radius fragments the market into 21 communities and shifts exact membership most strongly." },
-  { id: "r700", label: "Radius 700 m", radius: "700 m", k: "5", weights: "0.60 / 0.25 / 0.15", communities: 14, modularity: 0.7430, stability: 0.7438, neighbourhood: 0.5631, note: "A wider radius merges segments (14 communities) and increases agreement with official neighbourhoods." },
-  { id: "k3", label: "Attribute k = 3", radius: "500 m", k: "3", weights: "0.60 / 0.25 / 0.15", communities: 19, modularity: 0.7981, stability: 0.8631, neighbourhood: 0.5506, note: "Fewer similarity neighbours produces the closest alternative partition to the baseline (NMI = 0.8631)." },
-  { id: "k10", label: "Attribute k = 10", radius: "500 m", k: "10", weights: "0.60 / 0.25 / 0.15", communities: 17, modularity: 0.7819, stability: 0.8136, neighbourhood: 0.4668, note: "More similarity bridges retain 17 communities while subtly shifting cluster boundaries." },
-  { id: "spatial-heavy", label: "Spatial-heavy", radius: "500 m", k: "5", weights: "0.75 / 0.15 / 0.10", communities: 19, modularity: 0.7983, stability: 0.8541, neighbourhood: 0.5550, note: "Emphasizing location over attributes restores more neighbourhood-like cluster boundaries." },
-  { id: "attribute-heavy", label: "Attribute-heavy", radius: "500 m", k: "5", weights: "0.45 / 0.20 / 0.35", communities: 14, modularity: 0.7702, stability: 0.7429, neighbourhood: 0.4366, note: "Emphasizing listing similarity produces broader, less administrative citywide market segments." },
-];
+const sensitivityNotes: Record<string, string> = {
+  baseline: "Standard setup: 500 m spatial radius, attribute k = 5, and 0.60/0.25/0.15 weights.",
+  "radius-300-m": "A tighter radius fragments the market and shifts exact membership most strongly.",
+  "radius-700-m": "A wider radius merges segments and increases agreement with official neighbourhoods.",
+  "attribute-k-3": "Fewer similarity neighbours produces the closest alternative partition to the baseline.",
+  "attribute-k-10": "More similarity bridges keep the community count stable while shifting cluster boundaries.",
+  "spatial-heavy": "Emphasizing location over attributes restores more neighbourhood-like boundaries.",
+  "attribute-heavy": "Emphasizing listing similarity produces broader, less administrative citywide segments.",
+};
+
+const graphVariants: GraphVariant[] = generated.graphs.map((graph) => ({
+  ...graph,
+  takeaway: graphNotes[graph.id] ?? "",
+}));
+
+const algorithms = Object.fromEntries(
+  Object.entries(generated.algorithms).map(([name, data]) => [
+    name,
+    { ...data, note: algorithmNotes[name] ?? "" },
+  ]),
+) as Record<string, (typeof generated.algorithms)["Louvain"] & { note: string }>;
+
+const topCommunitiesSummary = generated.topCommunities;
+
+const validationSchemes: ValidationScheme[] = generated.validationSchemes.map((scheme) => ({
+  ...scheme,
+  note: validationNotes[scheme.id] ?? "",
+}));
+
+const sensitivitySettings: SensitivitySetting[] = generated.sensitivitySettings.map((setting) => ({
+  ...setting,
+  note: sensitivityNotes[setting.id] ?? "",
+}));
 
 function Arrow() {
   return <span aria-hidden="true">↗</span>;
@@ -209,6 +136,12 @@ export function PortfolioExperience() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const deltaValues = validationSchemes.map((scheme) => Number(scheme.delta));
+  const deltaRange = `${Math.min(...deltaValues) >= 0 ? "+" : ""}${Math.min(
+    ...deltaValues,
+  ).toFixed(4)} to ${Math.max(...deltaValues) >= 0 ? "+" : ""}${Math.max(
+    ...deltaValues,
+  ).toFixed(4)}`;
   const graph = graphVariants[graphIndex];
   const algorithmData = algorithms[algorithm];
   const validation = validationSchemes[validationIndex];
@@ -267,16 +200,16 @@ export function PortfolioExperience() {
       <aside className="marquee-strip" aria-label="Key project metrics ticker">
         <div className="marquee-content">
           <div className="marquee-item">
-            <span>15,809 LISTINGS</span> <span className="marquee-dot">·</span>
-            <span>140 OFFICIAL AREAS</span> <span className="marquee-dot">·</span>
+            <span>{headline.listings} LISTINGS</span> <span className="marquee-dot">·</span>
+            <span>{headline.officialAreas} OFFICIAL AREAS</span> <span className="marquee-dot">·</span>
             <span>17 MARKET COMMUNITIES</span> <span className="marquee-dot">·</span>
             <span>1 CONNECTED COMPONENT</span> <span className="marquee-dot">·</span>
             <span>TRANSDUCTIVE 5-FOLD VALIDATION</span> <span className="marquee-dot">·</span>
             <span>REPRODUCIBLE RESEARCH PIPELINE</span> <span className="marquee-dot">·</span>
           </div>
           <div className="marquee-item">
-            <span>15,809 LISTINGS</span> <span className="marquee-dot">·</span>
-            <span>140 OFFICIAL AREAS</span> <span className="marquee-dot">·</span>
+            <span>{headline.listings} LISTINGS</span> <span className="marquee-dot">·</span>
+            <span>{headline.officialAreas} OFFICIAL AREAS</span> <span className="marquee-dot">·</span>
             <span>17 MARKET COMMUNITIES</span> <span className="marquee-dot">·</span>
             <span>1 CONNECTED COMPONENT</span> <span className="marquee-dot">·</span>
             <span>TRANSDUCTIVE 5-FOLD VALIDATION</span> <span className="marquee-dot">·</span>
@@ -293,7 +226,7 @@ export function PortfolioExperience() {
               <p className="eyebrow">TORONTO AIRBNB SNAPSHOT</p>
               <h1 className="display-xl">Toronto’s Airbnb market doesn’t stop at neighbourhood lines.</h1>
               <p className="subhead">
-                15,809 listings. One connected market. See how proximity, ownership, and similarity reshape the city beyond its official boundaries.
+                {headline.listings} listings. One connected market. See how proximity, ownership, and similarity reshape the city beyond its official boundaries.
               </p>
               <div className="hero-actions">
                 <a className="btn-pill btn-primary" href="#network">
@@ -312,7 +245,7 @@ export function PortfolioExperience() {
               <dl className="hero-stats-row">
                 <div className="hero-stat-item">
                   <dt>Listings</dt>
-                  <dd>15,809</dd>
+                  <dd>{headline.listings}</dd>
                 </div>
                 <div className="hero-stat-item">
                   <dt>Official Areas</dt>
@@ -507,7 +440,7 @@ export function PortfolioExperience() {
                   loading="lazy"
                 />
                 <div className="figure-caption">
-                  {algorithm} partition: {algorithmData.communities} detected communities across 15,809 listings.
+                  {algorithm} partition: {algorithmData.communities} detected communities across {headline.listings} listings.
                 </div>
               </div>
 
@@ -548,7 +481,7 @@ export function PortfolioExperience() {
                         <span>5,857 listings · $125 median</span>
                       </div>
                       <p>
-                        Lower-priced entire homes spread across 114 official neighbourhoods.
+                        Lower-priced entire homes spread across {headline.widestCommunitySpan} official neighbourhoods.
                       </p>
                     </div>
                     <div className="archetype-card">
@@ -774,7 +707,10 @@ export function PortfolioExperience() {
             <div className="callout-box">
               <span className="callout-tag">Evidence-Based Verdict</span>
               <p>
-                <strong>Interesting market signal. Not a material pricing boost.</strong> Across random, host-grouped, and spatial five-fold validation, raw R² increases by only 0.0016–0.0024 while mean adjusted R² declines in all three schemes. The network’s primary value is explanatory, not predictive.
+                <strong>A real signal, but not a material pricing boost.</strong> Across random, host-grouped, and spatial-block five-fold validation, adding the network community label moves out-of-sample R² by {deltaRange}. The gain clears a size-matched random-partition null, so it is not just the effect of adding degrees of freedom — but the effect size is small enough that the network’s value here is explanatory rather than predictive.
+              </p>
+              <p className="callout-footnote">
+                The earlier version of this verdict rested on a decline in complexity-adjusted R². That statistic applies an in-sample parameter penalty to an out-of-sample score, so any 17-level categorical — including random labels — produces the same decline. It has been replaced by a permutation test and paired fold-level intervals.
               </p>
             </div>
           </div>
@@ -913,7 +849,7 @@ export function PortfolioExperience() {
                   Inside Airbnb Snapshot
                 </h3>
                 <p style={{ margin: 0, fontSize: "0.88rem" }}>
-                  November 2025 public Toronto data: 15,809 cleaned listings across 140 official neighbourhoods.
+                  November 2025 public Toronto data: {headline.listings} cleaned listings across {headline.officialAreas} official neighbourhoods.
                 </p>
               </div>
 
@@ -1023,7 +959,7 @@ export function PortfolioExperience() {
         <div className="footer-grid">
           <div className="footer-brand">
             <h4>Toronto Airbnb Market Network</h4>
-            <p>A network-science case study of 15,809 Toronto Airbnb listings, community structure, robustness, and price influence.</p>
+            <p>A network-science case study of {headline.listings} Toronto Airbnb listings, community structure, robustness, and price influence.</p>
           </div>
 
           <div className="footer-col">
