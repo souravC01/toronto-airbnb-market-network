@@ -1,0 +1,49 @@
+MIT License
+
+Copyright (c) 2026 Sourav Chandhok
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+SCOPE OF THIS LICENSE
+
+The MIT terms above cover the source code in this repository (`src/`,
+`scripts/`, `tests/`, `portfolio/`) and the derived result tables and figures in
+`results/`.
+
+They do NOT cover the following, which carry their own terms:
+
+1. Inside Airbnb data
+   `data/` contains listings data derived from the Inside Airbnb Toronto
+   snapshot (November 2025). Inside Airbnb publishes its data under a
+   Creative Commons CC0 1.0 Universal dedication, but the underlying listing
+   content originates from Airbnb. Review the terms at
+   https://insideairbnb.com/data-policies/ before redistributing the raw or
+   cleaned CSVs.
+
+2. Course report PDF
+   `portfolio/public/report/EECS4414-Airbnb-Network-Analysis-Final-Report.pdf`
+   is a York University EECS 4414 course submission. It is included for
+   portfolio display only. It is not licensed for reuse, modification, or
+   redistribution, and it must not be submitted as anyone else's academic work.
+
+3. Third-party dependencies
+   Python and Node dependencies retain their own licenses. See
+   `requirements-lock.txt` and `portfolio/pnpm-lock.yaml`.

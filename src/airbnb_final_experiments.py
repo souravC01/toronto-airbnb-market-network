@@ -100,8 +100,22 @@ def ensure_columns(df: pd.DataFrame, required: List[str]) -> None:
         raise ValueError(f"Missing required columns in cleaned CSV: {missing}")
 
 
-def load_clean_data(csv_path: Path) -> pd.DataFrame:
-    """Load the cleaned Airbnb CSV and apply safety cleaning."""
+def load_clean_data(csv_path: Path, impute_numeric: bool = True) -> pd.DataFrame:
+    """Load the cleaned Airbnb CSV and apply safety cleaning.
+
+    Parameters
+    ----------
+    impute_numeric:
+        When ``True`` (the default, used for graph construction and descriptive
+        work) missing numeric values are filled with the dataset-wide median.
+
+        Supervised experiments must pass ``False``. A dataset-wide median is a
+        statistic of every row, including the rows that later become a test
+        fold, so imputing here leaks feature-distribution information across the
+        split. Cross-validation code should leave the ``NaN`` values in place and
+        impute inside its own pipeline, where the imputer is fitted on training
+        rows only.
+    """
     df = pd.read_csv(csv_path)
 
     required = [
@@ -137,7 +151,8 @@ def load_clean_data(csv_path: Path) -> pd.DataFrame:
     for col in numeric_fill_cols:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-            df[col] = df[col].fillna(df[col].median())
+            if impute_numeric:
+                df[col] = df[col].fillna(df[col].median())
 
     categorical_fill_cols = [
         "room_type",
@@ -588,18 +603,30 @@ def save_community_summary(
     community_col: str,
     out_path: Path,
 ) -> pd.DataFrame:
-    """Save community-level summary statistics."""
+    """Save community-level summary statistics.
+
+    The ``*_share`` columns exist so that every figure quoted in the portfolio
+    front end can be traced back to this file. Anything the presentation layer
+    displays must be derived here, never retyped by hand.
+    """
+
+    def dominant_value(series: pd.Series) -> object:
+        return series.value_counts().index[0]
+
+    def dominant_share(series: pd.Series) -> float:
+        counts = series.value_counts()
+        return float(counts.iloc[0] / counts.sum())
+
     summary = (
         df_with_comm.groupby(community_col)
         .agg(
             listings=("id", "count"),
             median_price_w=("price_w", "median"),
             mean_price_w=("price_w", "mean"),
-            dominant_neighbourhood=(
-                "neighbourhood_cleansed",
-                lambda s: s.value_counts().index[0],
-            ),
-            dominant_room_type=("room_type", lambda s: s.value_counts().index[0]),
+            dominant_neighbourhood=("neighbourhood_cleansed", dominant_value),
+            dominant_neighbourhood_share=("neighbourhood_cleansed", dominant_share),
+            dominant_room_type=("room_type", dominant_value),
+            dominant_room_type_share=("room_type", dominant_share),
             unique_neighbourhoods=("neighbourhood_cleansed", "nunique"),
             unique_hosts=("host_id", "nunique"),
         )
