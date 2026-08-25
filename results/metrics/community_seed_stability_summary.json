@@ -1,0 +1,16 @@
+{
+  "seeds": 10,
+  "communities_min": 16,
+  "communities_max": 18,
+  "communities_median": 17.0,
+  "modularity_min": 0.7920782650931932,
+  "modularity_max": 0.7930201792513507,
+  "modularity_std": 0.0002963256317610459,
+  "largest_community_min": 6088,
+  "largest_community_max": 6670,
+  "pairwise_nmi_mean": 0.8816838234328775,
+  "pairwise_nmi_min": 0.8285503702704674,
+  "pairwise_nmi_p05": 0.8372988243425652,
+  "pairwise_ami_mean": 0.8812196844413378,
+  "pairwise_ami_min": 0.8278922217999726
+}

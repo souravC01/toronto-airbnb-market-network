@@ -36,11 +36,13 @@ from sklearn.metrics import (
     normalized_mutual_info_score,
     r2_score,
 )
+from sklearn.impute import SimpleImputer
 from sklearn.model_selection import GroupKFold, KFold
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 import airbnb_final_experiments as core
+import statistical_controls as controls
 
 
 BASELINE_MODEL = "Baseline: listing + official neighbourhood"
@@ -167,11 +169,36 @@ def make_validation_splits(
     }, spatial_blocks
 
 
+def winsorize_target_in_fold(
+    price: np.ndarray,
+    train_index: np.ndarray,
+    lower_quantile: float = 0.01,
+    upper_quantile: float = 0.99,
+) -> np.ndarray:
+    """Winsorize raw price using bounds estimated on training rows only.
+
+    ``clean_dataset.py`` computes its 1st/99th percentile clip on the full
+    dataset and stores the result as ``log_price_w``. Because that column is the
+    cross-validation target, every fold's target was clipped using percentiles
+    that saw its own test rows. The effect is small, but it is target leakage in
+    a repository that advertises having none, so the folds derive their own
+    bounds here instead.
+    """
+    low, high = np.quantile(price[train_index], [lower_quantile, upper_quantile])
+    return np.log(np.clip(price, low, high))
+
+
 def prepare_price_frame(
     df_with_community: pd.DataFrame,
     community_col: str,
 ) -> Tuple[pd.DataFrame, List[str], List[str]]:
-    """Prepare the modelling frame while retaining split identifiers."""
+    """Prepare the modelling frame while retaining split identifiers.
+
+    Missing numeric values are deliberately left as ``NaN``. They are imputed
+    inside :func:`make_price_pipeline`, which is fitted on training rows only.
+    Imputing here with a full-column median would leak the test folds' feature
+    distribution into every training set.
+    """
     numeric_features = [
         column for column in PRICE_NUMERIC_FEATURES if column in df_with_community.columns
     ]
@@ -187,13 +214,13 @@ def prepare_price_frame(
         "longitude",
         community_col,
     ]
-    columns = required + numeric_features + categorical_features
+    optional = [column for column in ("price", "price_w") if column in df_with_community.columns]
+    columns = required + optional + numeric_features + categorical_features
     work = df_with_community[columns].copy()
     work = work.dropna(subset=["log_price_w", "host_id", community_col]).reset_index(drop=True)
 
     for column in numeric_features:
         work[column] = pd.to_numeric(work[column], errors="coerce")
-        work[column] = work[column].fillna(work[column].median())
 
     for column in categorical_features + [community_col]:
         work[column] = work[column].fillna("Unknown").astype(str)
@@ -205,10 +232,20 @@ def make_price_pipeline(
     numeric_features: List[str],
     categorical_features: List[str],
 ) -> Pipeline:
-    """Construct the same ridge-regression specification used in the report."""
+    """Construct the ridge-regression specification used in the report.
+
+    The median imputer is inside the pipeline so that it is fitted per fold on
+    training rows only, matching how ``StandardScaler`` was already handled.
+    """
+    numeric_pipeline = Pipeline(
+        steps=[
+            ("impute", SimpleImputer(strategy="median")),
+            ("scale", StandardScaler()),
+        ]
+    )
     preprocessor = ColumnTransformer(
         transformers=[
-            ("num", StandardScaler(), numeric_features),
+            ("num", numeric_pipeline, numeric_features),
             ("cat", core.make_one_hot_encoder(), categorical_features),
         ],
         remainder="drop",
@@ -234,7 +271,11 @@ def evaluate_price_cross_validation(
         community_col,
     )
     schemes, spatial_blocks = make_validation_splits(work, n_splits=n_splits)
-    y = work["log_price_w"]
+
+    raw_price = (
+        work["price"].to_numpy(dtype=float) if "price" in work.columns else None
+    )
+    global_y = work["log_price_w"]
 
     model_specs = [
         (BASELINE_MODEL, categorical_features),
@@ -248,6 +289,16 @@ def evaluate_price_cross_validation(
             train_hosts = set(work.iloc[train_indices]["host_id"])
             test_hosts = set(work.iloc[test_indices]["host_id"])
             host_overlap_count = len(train_hosts & test_hosts)
+
+            # Winsorization bounds come from training rows only. Falls back to
+            # the precomputed global column when raw price is unavailable.
+            if raw_price is not None:
+                y = pd.Series(
+                    winsorize_target_in_fold(raw_price, train_indices),
+                    index=work.index,
+                )
+            else:
+                y = global_y
 
             for model_name, model_categorical_features in model_specs:
                 feature_columns = numeric_features + model_categorical_features
@@ -279,7 +330,14 @@ def evaluate_price_cross_validation(
                         "fold": fold,
                         "model": model_name,
                         "test_r2": r2,
-                        "test_adjusted_r2_approx": core.adjusted_r2_score(
+                        # Retained for continuity with the submitted report, but
+                        # do not draw conclusions from it. This applies an
+                        # in-sample complexity penalty to an out-of-sample score
+                        # using the training design matrix's column count, so its
+                        # sign is determined by the parameter count rather than by
+                        # the data. See statistical_controls.permutation_null_delta_r2
+                        # for the test that actually carries evidence.
+                        "test_adjusted_r2_nominal": core.adjusted_r2_score(
                             r2,
                             len(y_test),
                             encoded_features,
@@ -310,8 +368,8 @@ def evaluate_price_cross_validation(
             test_rows_mean=("test_rows", "mean"),
             r2_mean=("test_r2", "mean"),
             r2_std=("test_r2", "std"),
-            adjusted_r2_mean=("test_adjusted_r2_approx", "mean"),
-            adjusted_r2_std=("test_adjusted_r2_approx", "std"),
+            adjusted_r2_mean=("test_adjusted_r2_nominal", "mean"),
+            adjusted_r2_std=("test_adjusted_r2_nominal", "std"),
             mae_log_mean=("mae_log_price", "mean"),
             mae_log_std=("mae_log_price", "std"),
             rmse_log_mean=("rmse_log_price", "mean"),
@@ -328,7 +386,7 @@ def evaluate_price_cross_validation(
     delta_rows = []
     metrics = {
         "test_r2": "r2_delta",
-        "test_adjusted_r2_approx": "adjusted_r2_delta",
+        "test_adjusted_r2_nominal": "adjusted_r2_delta",
         "mae_log_price": "mae_log_delta",
         "rmse_log_price": "rmse_log_delta",
         "mae_dollars_approx": "mae_dollars_delta",
@@ -350,12 +408,12 @@ def evaluate_price_cross_validation(
                 group.pivot(
                     index="fold",
                     columns="model",
-                    values="test_adjusted_r2_approx",
+                    values="test_adjusted_r2_nominal",
                 )[EXPANDED_MODEL]
                 > group.pivot(
                     index="fold",
                     columns="model",
-                    values="test_adjusted_r2_approx",
+                    values="test_adjusted_r2_nominal",
                 )[BASELINE_MODEL]
             ).sum()
         )
@@ -490,7 +548,19 @@ def run_parameter_sensitivity(
     fig_dir: Path,
     configs: Iterable[SensitivityConfig] = SENSITIVITY_CONFIGS,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Run the one-at-a-time Graph C sensitivity experiment."""
+    """Run the one-at-a-time Graph C sensitivity experiment.
+
+    Graph construction is unsupervised and needs complete numeric features for
+    the cosine-similarity step, so missing values are median-filled on a local
+    copy here. The returned assignment is joined back onto the caller's frame,
+    which keeps its ``NaN`` values so that the supervised stage can impute inside
+    its own cross-validation folds.
+    """
+    df = df.copy()
+    for column in df.select_dtypes(include=[np.number]).columns:
+        if df[column].isna().any():
+            df[column] = df[column].fillna(df[column].median())
+
     graph_config = core.GraphConfig(
         "Graph C: Spatial + shared host + attribute similarity",
         True,
@@ -650,13 +720,25 @@ def main() -> None:
     out_dir = Path(args.out_dir)
     fig_dir = Path(args.fig_dir)
     print(f"Loading cleaned dataset: {csv_path}")
-    df = core.load_clean_data(csv_path)
+    # impute_numeric=False: this module cross-validates, so numeric imputation
+    # must happen per fold inside the pipeline rather than dataset-wide here.
+    df = core.load_clean_data(csv_path, impute_numeric=False)
     print(f"Rows loaded: {len(df):,}")
 
     sensitivity, baseline_assignment = run_parameter_sensitivity(
         df,
         out_dir,
         fig_dir,
+    )
+
+    # `run_parameter_sensitivity` median-fills numerics internally for graph
+    # construction. Re-join the community labels onto the un-imputed frame so the
+    # supervised stage imputes per fold instead of inheriting a global median.
+    community_columns = [
+        column for column in baseline_assignment.columns if column not in df.columns
+    ]
+    baseline_assignment = df.merge(
+        baseline_assignment[["id", *community_columns]], on="id", how="inner"
     )
     cv_results, cv_summary, cv_deltas = evaluate_price_cross_validation(
         baseline_assignment,

@@ -1,0 +1,301 @@
+{
+  "_generated_by": "scripts/export_portfolio_data.py",
+  "_do_not_edit": "Every value here is derived from results/tables/*.csv. Edit the pipeline, re-run it, then regenerate this file. CI fails on drift.",
+  "_source_digests": {
+    "alignment_controls.csv": "b8a1e209f64b337f",
+    "alignment_results.csv": "311b44a99394171d",
+    "community_results.csv": "8eae06d6ef3ed95d",
+    "community_seed_pairwise_agreement.csv": "bde6834d7a629397",
+    "community_seed_stability.csv": "6a168776f0172f29",
+    "graph_c_leiden_community_summary.csv": "3e1193e7c4bb4145",
+    "graph_c_louvain_assignment.csv": "21ba936671e3a1f3",
+    "graph_c_louvain_community_summary.csv": "d2556d34d00a50cf",
+    "graph_stats.csv": "470fbbae19fbe5f3",
+    "parameter_sensitivity_results.csv": "e9262abf3e57ae17",
+    "price_model_cv_deltas.csv": "fb3f12eb8f08e25e",
+    "price_model_cv_results.csv": "7fa0c4c338fa0f43",
+    "price_model_cv_summary.csv": "6f37220e0c568c1d",
+    "price_model_paired_tests.csv": "88ccfd275dab2ccc",
+    "price_model_results.csv": "2006eef647f7affc"
+  },
+  "headline": {
+    "listings": "15,809",
+    "officialAreas": 140,
+    "widestCommunitySpan": 114,
+    "communities": 17,
+    "components": 1,
+    "componentsSpatialOnly": 100
+  },
+  "graphs": [
+    {
+      "id": "A",
+      "name": "Spatial only",
+      "fullName": "Graph A: Spatial only",
+      "relationships": [
+        "Within 500 m geographic radius"
+      ],
+      "nodes": "15,809",
+      "edges": "1,552,469",
+      "components": 100,
+      "largestComp": "87.8%",
+      "avgDegree": "196.4",
+      "modularity": "0.8051",
+      "communities": 134,
+      "nmi": 0.7494,
+      "vi": "2.790",
+      "takeaway": "Proximity alone splits the city into many disconnected pockets that track official neighbourhood boundaries closely."
+    },
+    {
+      "id": "B",
+      "name": "Spatial + shared host",
+      "fullName": "Graph B: Spatial + shared host",
+      "relationships": [
+        "Within 500 m geographic radius",
+        "Same-host nearest neighbours (k=5)"
+      ],
+      "nodes": "15,809",
+      "edges": "1,555,991",
+      "components": 53,
+      "largestComp": "98.7%",
+      "avgDegree": "196.8",
+      "modularity": "0.8069",
+      "communities": 94,
+      "nmi": 0.703,
+      "vi": "3.211",
+      "takeaway": "Multi-listing hosts bridge nearby pockets, roughly halving the number of disconnected components."
+    },
+    {
+      "id": "C",
+      "name": "Full market network",
+      "fullName": "Graph C: Spatial + shared host + attribute similarity",
+      "relationships": [
+        "Within 500 m geographic radius",
+        "Same-host nearest neighbours (k=5)",
+        "Listing attribute cosine similarity (k=5)"
+      ],
+      "nodes": "15,809",
+      "edges": "1,607,040",
+      "components": 1,
+      "largestComp": "100.0%",
+      "avgDegree": "203.3",
+      "modularity": "0.7926",
+      "communities": 17,
+      "nmi": 0.5182,
+      "vi": "4.502",
+      "takeaway": "Attribute-similarity links connect the entire city into one component and a small number of broad segments that cross administrative lines."
+    }
+  ],
+  "algorithms": {
+    "Louvain": {
+      "communities": 17,
+      "modularity": 0.7926,
+      "largest": "5,857",
+      "medianSize": "717",
+      "nmi": 0.5182,
+      "vi": 4.5024,
+      "image": "/figures/graph_c_louvain_community_map.png"
+    },
+    "Leiden": {
+      "communities": 16,
+      "modularity": 0.7936,
+      "largest": "7,078",
+      "medianSize": "554",
+      "nmi": 0.4941,
+      "vi": 4.565,
+      "image": "/figures/graph_c_leiden_community_map.png"
+    }
+  },
+  "topCommunities": [
+    {
+      "id": "C2",
+      "size": "5,857",
+      "price": "$90",
+      "dominantNeighbourhood": "South Riverdale",
+      "roomType": "Entire home/apt",
+      "span": "114"
+    },
+    {
+      "id": "C14",
+      "size": "1,871",
+      "price": "$118",
+      "dominantNeighbourhood": "Dovercourt-Wallace Emerson-Junction",
+      "roomType": "Entire home/apt",
+      "span": "59"
+    },
+    {
+      "id": "C3",
+      "size": "1,109",
+      "price": "$110",
+      "dominantNeighbourhood": "Kensington-Chinatown",
+      "roomType": "Entire home/apt",
+      "span": "21"
+    },
+    {
+      "id": "C4",
+      "size": "1,080",
+      "price": "$201",
+      "dominantNeighbourhood": "Waterfront Communities-The Island",
+      "roomType": "Entire home/apt",
+      "span": "5"
+    },
+    {
+      "id": "C13",
+      "size": "813",
+      "price": "$161",
+      "dominantNeighbourhood": "Moss Park",
+      "roomType": "Entire home/apt",
+      "span": "16"
+    },
+    {
+      "id": "C8",
+      "size": "738",
+      "price": "$194",
+      "dominantNeighbourhood": "Waterfront Communities-The Island",
+      "roomType": "Entire home/apt",
+      "span": "3"
+    },
+    {
+      "id": "C16",
+      "size": "732",
+      "price": "$167",
+      "dominantNeighbourhood": "Bay Street Corridor",
+      "roomType": "Entire home/apt",
+      "span": "15"
+    },
+    {
+      "id": "C7",
+      "size": "731",
+      "price": "$194",
+      "dominantNeighbourhood": "Waterfront Communities-The Island",
+      "roomType": "Entire home/apt",
+      "span": "1"
+    }
+  ],
+  "validationSchemes": [
+    {
+      "id": "random",
+      "label": "Random folds",
+      "fullName": "Random 5-Fold Cross-Validation",
+      "baseline": 0.6341,
+      "expanded": 0.6358,
+      "delta": "+0.0017",
+      "adjustedDelta": "−0.0004",
+      "baseMae": "$55.91",
+      "expandedMae": "$55.73",
+      "maeDelta": "−$0.18",
+      "wins": "5 / 5"
+    },
+    {
+      "id": "host",
+      "label": "Host-grouped",
+      "fullName": "Host-Grouped 5-Fold Cross-Validation",
+      "baseline": 0.6246,
+      "expanded": 0.6262,
+      "delta": "+0.0016",
+      "adjustedDelta": "−0.0007",
+      "baseMae": "$56.32",
+      "expandedMae": "$56.18",
+      "maeDelta": "−$0.14",
+      "wins": "5 / 5"
+    },
+    {
+      "id": "spatial",
+      "label": "Spatial blocks",
+      "fullName": "Spatial-Block 5-Fold Cross-Validation",
+      "baseline": 0.529,
+      "expanded": 0.5314,
+      "delta": "+0.0024",
+      "adjustedDelta": "−0.0010",
+      "baseMae": "$52.26",
+      "expandedMae": "$51.83",
+      "maeDelta": "−$0.43",
+      "wins": "3 / 5"
+    }
+  ],
+  "sensitivitySettings": [
+    {
+      "id": "baseline",
+      "label": "Baseline",
+      "radius": "500 m",
+      "k": "5",
+      "weights": "0.60 / 0.25 / 0.15",
+      "edges": "1,607,040",
+      "communities": 17,
+      "modularity": 0.7926,
+      "stability": 1.0,
+      "neighbourhood": 0.5182
+    },
+    {
+      "id": "radius-300-m",
+      "label": "Radius 300 m",
+      "radius": "300 m",
+      "k": "5",
+      "weights": "0.60 / 0.25 / 0.15",
+      "edges": "918,057",
+      "communities": 21,
+      "modularity": 0.8025,
+      "stability": 0.6945,
+      "neighbourhood": 0.434
+    },
+    {
+      "id": "radius-700-m",
+      "label": "Radius 700 m",
+      "radius": "700 m",
+      "k": "5",
+      "weights": "0.60 / 0.25 / 0.15",
+      "edges": "2,644,251",
+      "communities": 14,
+      "modularity": 0.743,
+      "stability": 0.7438,
+      "neighbourhood": 0.5631
+    },
+    {
+      "id": "attribute-k-3",
+      "label": "Attribute k = 3",
+      "radius": "500 m",
+      "k": "3",
+      "weights": "0.60 / 0.25 / 0.15",
+      "edges": "1,586,802",
+      "communities": 19,
+      "modularity": 0.7981,
+      "stability": 0.8631,
+      "neighbourhood": 0.5506
+    },
+    {
+      "id": "attribute-k-10",
+      "label": "Attribute k = 10",
+      "radius": "500 m",
+      "k": "10",
+      "weights": "0.60 / 0.25 / 0.15",
+      "edges": "1,658,047",
+      "communities": 17,
+      "modularity": 0.7819,
+      "stability": 0.8136,
+      "neighbourhood": 0.4668
+    },
+    {
+      "id": "spatial-heavy",
+      "label": "Spatial-heavy",
+      "radius": "500 m",
+      "k": "5",
+      "weights": "0.75 / 0.15 / 0.10",
+      "edges": "1,607,040",
+      "communities": 19,
+      "modularity": 0.7983,
+      "stability": 0.8541,
+      "neighbourhood": 0.555
+    },
+    {
+      "id": "attribute-heavy",
+      "label": "Attribute-heavy",
+      "radius": "500 m",
+      "k": "5",
+      "weights": "0.45 / 0.20 / 0.35",
+      "edges": "1,607,040",
+      "communities": 14,
+      "modularity": 0.7702,
+      "stability": 0.7429,
+      "neighbourhood": 0.4366
+    }
+  ]
+}

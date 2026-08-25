@@ -1,0 +1,2 @@
+detected_communities,official_neighbourhoods,nmi_vs_official,ami_vs_official,nmi_vs_matched_regions,ami_vs_matched_regions,nmi_random_floor,ami_random_floor,nmi_geographic_ceiling,ami_geographic_ceiling
+16,140,0.4948182084242324,0.4835349652419244,0.44514254675634796,0.44332089008334175,0.02070847731285287,-0.0011640140973893085,0.6706059072470163,0.6633783822237821

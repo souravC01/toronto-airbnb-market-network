@@ -1,0 +1,35 @@
+{
+  "shuffled": {
+    "null": "shuffled",
+    "n_permutations": 200,
+    "n_communities": 16,
+    "baseline_r2_mean": 0.6245944821058116,
+    "observed_expanded_r2_mean": 0.6257929226222441,
+    "observed_delta_r2": 0.0011984405164324752,
+    "null_delta_r2_mean": -0.0004100777166872721,
+    "null_delta_r2_std": 0.00021999416645132093,
+    "null_delta_r2_p05": -0.0007496241616601618,
+    "null_delta_r2_p95": -6.242055453065111e-05,
+    "null_delta_r2_max": 0.0003029529077019921,
+    "exceedances": 0,
+    "p_value": 0.004975124378109453,
+    "standardised_effect": 7.311640390590407
+  },
+  "spatial": {
+    "null": "spatial",
+    "n_permutations": 200,
+    "n_communities": 16,
+    "baseline_r2_mean": 0.6245944821058116,
+    "observed_expanded_r2_mean": 0.6257929226222441,
+    "observed_delta_r2": 0.0011984405164324752,
+    "null_delta_r2_mean": -0.00044509916833921747,
+    "null_delta_r2_std": 0.00030796722651240717,
+    "null_delta_r2_p05": -0.0008831822448778504,
+    "null_delta_r2_p95": 0.0001391497684313234,
+    "null_delta_r2_max": 0.0004359925954993127,
+    "exceedances": 0,
+    "p_value": 0.004975124378109453,
+    "standardised_effect": 5.336735676013496
+  },
+  "_note": "Splits are host-grouped 5-fold. The observed statistic is the mean out-of-sample delta R-squared from adding the network community label. p is the empirical exceedance rate of the null distribution, with the usual +1 correction."
+}
