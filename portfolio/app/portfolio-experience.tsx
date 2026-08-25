@@ -707,7 +707,7 @@ export function PortfolioExperience() {
             <div className="callout-box">
               <span className="callout-tag">Evidence-Based Verdict</span>
               <p>
-                <strong>A real signal, but not a material pricing boost.</strong> The network community labels provide real statistical signal over random partitions across all cross-validation schemes (random, grouped, and spatial), but yield only a minimal lift in out-of-sample $R^2$ ($+0.0016$ to $+0.0024$). Because the effect size is so modest, the network structure is useful for understanding market clusters rather than improving production pricing models.
+                <strong>A real signal, but not a material pricing boost.</strong> The network community labels provide real statistical signal over random partitions across all cross-validation schemes (random, grouped, and spatial), but yield only a minimal lift in out-of-sample R squared ({deltaRange}). Because the effect size is so modest, the network structure is useful for understanding market clusters rather than improving production pricing models.
               </p>
               <p className="callout-footnote">
                 The original evaluation was flawed because the complexity-adjusted $R^2$ metric systematically penalized any 17-level category, even random noise, by improperly mixing in-sample penalties with out-of-sample scores. We resolved this by switching to a permutation test and paired fold-level intervals for a more reliable assessment.
