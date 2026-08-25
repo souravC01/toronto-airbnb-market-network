@@ -37,7 +37,7 @@ const validationNotes: Record<string, string> = {
   host:
     "Every host stays strictly in train or test (zero host overlap, verified per fold), so the association is not host leakage.",
   spatial:
-    "Holding out whole geographic regions lowers R² because within-block price variance is lower, not because absolute error is worse — MAE is in fact the lowest of the three schemes. The gain is inconsistent across blocks.",
+    "Holding out whole geographic regions lowers R² because within-block price variance is lower, not because absolute error is worse, MAE is in fact the lowest of the three schemes. The gain is inconsistent across blocks.",
 };
 
 const sensitivityNotes: Record<string, string> = {
