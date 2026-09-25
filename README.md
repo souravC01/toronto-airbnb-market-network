@@ -1,5 +1,7 @@
 # Toronto Airbnb Market Network Analysis
 
+[![Interactive Demo](https://img.shields.io/badge/Interactive_Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://toronto-airbnb-market-network.vercel.app/)
+[![Case Study](https://img.shields.io/badge/Portfolio_Case_Study-2563EB?style=for-the-badge&logo=readme&logoColor=white)](https://souravchandhok.dev/projects/toronto-airbnb/)
 [![CI](https://github.com/souravC01/toronto-airbnb-market-network/actions/workflows/ci.yml/badge.svg)](https://github.com/souravC01/toronto-airbnb-market-network/actions/workflows/ci.yml)
 
 How closely do Airbnb market segments follow Toronto's official neighbourhood boundaries?
@@ -8,13 +10,17 @@ This project models 15,809 Toronto Airbnb listings as a weighted information net
 
 ![Labelled Toronto Airbnb market communities](results/figures/graph_c_louvain_community_map_labelled.png)
 
-## Interactive portfolio
+## Interactive Demo & Portfolio Case Study
 
 The findings are also presented as an interactive, responsive case study with graph-layer, community-algorithm, validation-scheme, and parameter-sensitivity explorers.
 
-[Open the live interactive case study](https://toronto-airbnb-market-network.vercel.app/).
+[Read the portfolio case study](https://souravchandhok.dev/projects/toronto-airbnb/)
 
-[Open the original EECS 4414 final report](portfolio/public/report/EECS4414-Airbnb-Network-Analysis-Final-Report.pdf). The PDF is preserved unchanged with its original submission authorship.
+[Open the live interactive demo](https://toronto-airbnb-market-network.vercel.app/)
+
+[Open the original EECS 4414 final report](portfolio/public/report/EECS4414-Airbnb-Network-Analysis-Final-Report.pdf).
+
+(The PDF is preserved unchanged with its original submission authorship)
 
 To run the presentation locally:
 
